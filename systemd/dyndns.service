@@ -1,0 +1,6 @@
+[Unit]
+Description=Update home.j3ff.io DNS record
+
+[Service]
+Type=oneshot
+ExecStart=docker run -i --rm --env-file /opt/dyndns/dyndns.env j3ff/dyndns

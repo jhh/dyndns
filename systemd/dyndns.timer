@@ -1,0 +1,9 @@
+[Unit]
+Description=Periodic update of home.j3ff.io DNS record
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=4h
+
+[Install]
+WantedBy=timers.target
