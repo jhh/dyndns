@@ -1,11 +1,11 @@
-FROM python:3
+FROM python:3.9.5-slim
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY requirements.txt ./
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
-RUN python setup.py install
+COPY dist/*.whl .
+RUN pip install --no-cache-dir *.whl && rm -rf *.whl
 
-CMD [ "python", "dyndns" ]
+CMD [ "python", "-m", "dyndns" ]
