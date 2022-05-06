@@ -9,5 +9,3 @@ IPIFY_API_URI = "https://api.ipify.org"
 
 CREDENTIALS_FILE = Path(os.environ["CREDENTIALS_DIRECTORY"]) / "AWS_SECRET_ACCESS_KEY"
 AWS_SECRET = CREDENTIALS_FILE.read_text().strip()
-
-print(f"AWS_SECRET = {AWS_SECRET}")
