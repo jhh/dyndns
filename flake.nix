@@ -40,44 +40,38 @@
         in
         {
           options.j3ff.dyndns = {
-            enable = mkEnableOption "Enable the Deadeye admin middleware service";
-
-            port = mkOption {
-              description = "Port the server listens on.";
-              type = types.port;
-              default = 5000;
-            };
-
-            uploadDir = mkOption {
-              description = "Directory used for image uploads.";
-              type = types.str;
-              default = "/tmp/deadeye";
-            };
+            enable = mkEnableOption "Enable the dyndns service";
           };
-
-
-
 
           config = mkIf cfg.enable
             {
-              systemd.services.deadeye-admin = {
+              systemd.timers.dyndns = {
+                description = "Periodic update of home.j3ff.io DNS record";
                 wantedBy = [ "multi-user.target" ];
 
+                timerConfig = {
+                  OnBootSec = "15min";
+                  OnUnitActiveSec = "4h";
+                };
+              };
+
+              systemd.services.dyndns = {
+                description = "Update home.j3ff.io DNS record";
+
                 environment = {
-                  DEADEYE_NT_SERVER = cfg.ntServerAddress;
-                  DEADEYE_NT_PORT = "${toString cfg.ntServerPort}";
-                  DEADEYE_ADMIN_PORT = "${toString cfg.admin.port}";
-                  DEADEYE_NT_WAIT_MS = "500";
-                  DEADEYE_UPLOAD_DIR = cfg.admin.uploadDir;
-                  FLASK_ENV = "production";
+                  DNS_SERVER = "8.8.8.8";
+                  DYNDNS_HOST = "home.j3ff.io";
+                  AWS_ZONE_ID = "Z2N63DHUXZQTEZ";
+                  AWS_ACCESS_KEY_ID = "AKIAIGGOL2YKLGRADUDQ";
                 };
 
                 serviceConfig =
-                  let pkg = self.packages.${pkgs.system}.admin;
+                  let pkg = self.packages.${pkgs.system}.dyndns;
                   in
                   {
-                    Restart = "on-failure";
-                    ExecStart = "${pkg}/bin/deadeye-server";
+                    Type = "oneshot";
+                    LoadCredential = "AWS_SECRET_ACCESS_KEY:/run/agenix/aws_secret";
+                    ExecStart = "${pkg}/bin/dyndns-cli";
                   };
               };
             };
@@ -93,8 +87,11 @@
             # Only allow this to boot as a container
             boot.isContainer = true;
             networking.hostName = "dnydns";
+            networking.hosts = {
+              "3.232.242.170" = [ "api.ipify.org" ];
+            };
 
-            deadeye.dyndns.enable = true;
+            j3ff.dyndns.enable = true;
           })
         ];
       };
