@@ -5,6 +5,9 @@ description = "Dynamic DNS update script for Route 53"
 authors = ["Jeff Hutchison <jeff@jeffhutchison.com>"]
 license = "MIT"
 
+[tool.poetry.scripts]
+dyndns-cli = "dyndns.cli:main"
+
 [tool.poetry.dependencies]
 python = "^3.9"
 boto3 = "^1.14"
