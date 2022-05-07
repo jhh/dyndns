@@ -73,6 +73,10 @@
                     # agenix secret in github:jhh/nixos-configs
                     LoadCredential = "AWS_SECRET_ACCESS_KEY:/run/agenix/aws_secret";
                     ExecStart = "${pkg}/bin/dyndns-cli";
+
+                    DynamicUser = true;
+                    NoNewPrivileges = true;
+                    ProtectSystem = "strict";
                   };
               };
             };
