@@ -8,7 +8,7 @@ IP address and updates AWS Route 53.
 import dns.resolver
 import boto3
 import sys
-from .settings import DNS_SERVER, DYNDNS_HOST, ZONE_ID
+from .settings import AWS_ACCESS_ID, AWS_SECRET, DNS_SERVER, DYNDNS_HOST, ZONE_ID
 
 
 def check(ip):
@@ -29,7 +29,7 @@ def check(ip):
 
 
 def update(ip):
-    client = boto3.client("route53")
+    client = boto3.client("route53",aws_access_key_id=AWS_ACCESS_ID, aws_secret_access_key=AWS_SECRET)
     try:
         response = client.change_resource_record_sets(
             HostedZoneId=ZONE_ID,
